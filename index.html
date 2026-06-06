@@ -26,7 +26,7 @@
   .hero-tag{font-size:.6rem;letter-spacing:.3em;text-transform:uppercase;color:var(--accent);margin-bottom:1.5rem;opacity:0;animation:fadeUp .8s ease .2s forwards}
   .hero h1{font-family:'DM Serif Display',serif;font-size:clamp(3.5rem,9vw,8rem);line-height:.92;letter-spacing:-.02em;max-width:800px;opacity:0;animation:fadeUp .9s ease .4s forwards}
   .hero h1 em{font-style:italic;color:var(--accent)}
-  .hero-sub{margin-top:2rem;font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;max-width:320px;line-height:1.8;opacity:0;animation:fadeUp .9s ease .6s forwards;color:var(--cream)}
+  .hero-sub{margin-top:2rem;font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;max-width:320px;line-height:1.8;opacity:0;animation:fadeUp .9s ease .6s forwards;color:var(--cream);opacity:0}
   @keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
   .hero-scroll{position:absolute;right:3rem;bottom:4rem;writing-mode:vertical-rl;font-size:.55rem;letter-spacing:.3em;text-transform:uppercase;opacity:.35;display:flex;align-items:center;gap:1rem}
   .hero-scroll::before{content:'';display:block;width:1px;height:60px;background:var(--cream);animation:scrollLine 1.8s ease-in-out infinite}
@@ -107,115 +107,151 @@
 <script>
 /* ============================================================
    ✏️  EDIT YOUR ARTISTS HERE — everything updates automatically
-   ============================================================ */
+   ============================================================
+
+   For each artist fill in:
+   - name        : Full name
+   - initials    : 2 letters shown as placeholder (until you add a photo)
+   - photo       : Leave as "" to use initials, or put an image URL/path e.g. "photos/jade.jpg"
+   - discipline  : Their role e.g. "Rapper · Producer"
+   - type        : One of: music | visual | photography | design
+   - bio         : Short description (2 sentences max)
+   - email       : Their contact email
+
+   To ADD an artist: copy one block and paste it inside the array, separated by a comma.
+   To REMOVE an artist: delete that block.
+   The FIRST artist in the list automatically becomes the Featured Artist.
+*/
 
 const ARTISTS = [
   {
-    name:        "Fenno",
-    initials:    "FN",
-    photo:       "",
-    discipline:  "Producer · Artist · Songwriter",
-    type:        "music",
-    bio:         "Underground artist crafting cinematic soundscapes at the intersection of Jerk and experimental hip-hop.",
-    email:       "fennomgmt@gmail.com",
-    featuredBio: "Based in London, Fenno has been quietly building one of the most distinctive catalogs in underground music. His approach blends jerk, trap percussion, and field recordings into something genuinely new. Currently available for sync licensing, collaborations, and limited live bookings."
+    name:       "Fenno",
+    initials:   "",
+    photo:      "https://snipboard.io/BE4HZe.jpg",
+    discipline: "Producer · Artist · Songwriter",
+    type:       "music",
+    bio:        "Underground Artist crafting cinematic soundscapes at the intersection of Jerk and experimental hip-hop.",
+    email:      "fennomgmt@gmail.com",
+    featuredBio: "Based  in London, Fenno has been quietly building one of the most distinctive catalogs in underground music. His approach blends jerk, trap percussion, and field recordings into something genuinely new. Currently available for sync licensing, collaborations, and limited live bookings."
   },
   {
     name:       "TrueDenim",
-    initials:   "TD",
-    photo:      "",
+    initials:   "",
+    photo: "https://snipboard.io/VFWHZy.jpg",
     discipline: "Rapper · Songwriter · Artist",
     type:       "music",
-    bio:        "Underground artist crafting cinematic soundscapes at the intersection of cloud rap and experimental hip-hop.",
+    bio:        "Underground Artist crafting cinematic soundscapes at the intersection of cloud and experimental hip-hop.",
     email:      "truedenimmgmt@gmail.com"
   }
-];
+ ];
 
 /* ============================================================
-   ✏️  SITE SETTINGS
+   ✏️  SITE SETTINGS — change these to personalise the site
    ============================================================ */
 
 const SITE = {
-  name:        "Inayat Management Co.",
-  logoText:    "INAYAT·MGMT CO.",
-  tagline:     "Where raw talent meets the world",
-  subtext:     "A curated collective of independent artists, producers, and creatives. Booking, collabs, and press inquiries welcome.",
-  rosterTitle: "The Roster",
-  contactText: "All artists are available for bookings, collaborations, and press enquiries. Reach out directly via their listed email or get in touch with the collective.",
-  year:        "2026"
+  name:       "Inayat Management Co.",
+  logoText:   "INAYAT·MGMT CO.",
+  tagline:    "Where raw talent meets the world",
+  subtext:    "A curated collective of independent artists, producers, designers, and creatives. Booking, collabs, and press inquiries welcome.",
+  rosterTitle:"The Roster",
+  contactText:"All artists are available for bookings, collaborations, commissions, and press enquiries. Reach out directly via their listed email or get in touch with the collective.",
+  year:       "2026"
 };
 
 /* ============================================================
    🔧 ENGINE — no need to edit below this line
    ============================================================ */
 
-function typeLabel(type){
-  return{music:"Music",visual:"Visual Art",photography:"Photography",design:"Design"}[type]||type;
+function typeLabel(type) {
+  return { music: "Music", visual: "Visual Art", photography: "Photography", design: "Design" }[type] || type;
 }
-function getInitials(name){
-  return name.split(" ").map(w=>w[0]).join("").slice(0,2).toUpperCase();
+
+function initials(name) {
+  return name.split(" ").map(w => w[0]).join("").slice(0, 2).toUpperCase();
 }
-function buildCards(){
-  const grid=document.getElementById("artistGrid");
-  ARTISTS.forEach(a=>{
-    const div=document.createElement("div");
-    div.className="artist-card";
-    div.dataset.type=a.type;
-    const imgHTML=a.photo
-      ?`<div class="card-img"><span class="card-type-badge">${typeLabel(a.type)}</span><img src="${a.photo}" alt="${a.name}" loading="lazy"></div>`
-      :`<div class="card-img placeholder"><span class="card-type-badge">${typeLabel(a.type)}</span><span class="initials">${a.initials||getInitials(a.name)}</span></div>`;
-    div.innerHTML=`<div class="card-inner">${imgHTML}<div class="card-body"><div class="card-name">${a.name}</div><div class="card-discipline">${a.discipline}</div><div class="card-bio">${a.bio}</div><a class="card-email" href="mailto:${a.email}">${a.email}</a></div></div>`;
+
+function buildCards() {
+  const grid = document.getElementById("artistGrid");
+  ARTISTS.forEach(a => {
+    const div = document.createElement("div");
+    div.className = "artist-card";
+    div.dataset.type = a.type;
+    const imgHTML = a.photo
+      ? `<div class="card-img"><span class="card-type-badge">${typeLabel(a.type)}</span><img src="${a.photo}" alt="${a.name}" loading="lazy"></div>`
+      : `<div class="card-img placeholder"><span class="card-type-badge">${typeLabel(a.type)}</span><span class="initials">${a.initials || initials(a.name)}</span></div>`;
+    div.innerHTML = `
+      <div class="card-inner">
+        ${imgHTML}
+        <div class="card-body">
+          <div class="card-name">${a.name}</div>
+          <div class="card-discipline">${a.discipline}</div>
+          <div class="card-bio">${a.bio}</div>
+          <a class="card-email" href="mailto:${a.email}">${a.email}</a>
+        </div>
+      </div>`;
     grid.appendChild(div);
   });
-  document.getElementById("countLabel").textContent=`${ARTISTS.length} Artists`;
+  document.getElementById("countLabel").textContent = `${ARTISTS.length} Creatives`;
 }
-function buildFeatured(){
-  const f=ARTISTS[0];
-  const parts=f.name.split(" ");
-  document.getElementById("featuredInitials").textContent=f.initials||getInitials(f.name);
-  document.getElementById("featuredName").innerHTML=parts.length>1?`${parts[0]}<br><em>${parts.slice(1).join(" ")}</em>`:`<em>${f.name}</em>`;
-  document.getElementById("featuredDiscipline").textContent=f.discipline;
-  document.getElementById("featuredBio").textContent=f.featuredBio||f.bio;
-  document.getElementById("featuredEmail").href=`mailto:${f.email}`;
-  document.getElementById("featuredEmail").textContent=f.email;
+
+function buildFeatured() {
+  const f = ARTISTS[0];
+  const nameParts = f.name.split(" ");
+  const first = nameParts[0];
+  const last = nameParts.slice(1).join(" ");
+  document.getElementById("featuredInitials").textContent = f.initials || initials(f.name);
+  document.getElementById("featuredName").innerHTML = `${first}<br><em>${last}</em>`;
+  document.getElementById("featuredDiscipline").textContent = f.discipline;
+  document.getElementById("featuredBio").textContent = f.featuredBio || f.bio;
+  document.getElementById("featuredEmail").href = `mailto:${f.email}`;
+  document.getElementById("featuredEmail").textContent = f.email;
 }
-function buildContact(){
-  const list=document.getElementById("contactList");
-  ARTISTS.forEach(a=>{
-    const div=document.createElement("div");
-    div.className="contact-item";
-    div.innerHTML=`<div class="contact-item-name">${a.name}</div><div class="contact-item-meta"><span class="contact-item-discipline">${a.discipline}</span><a class="contact-item-email" href="mailto:${a.email}">${a.email}</a></div>`;
+
+function buildContact() {
+  const list = document.getElementById("contactList");
+  ARTISTS.forEach(a => {
+    const div = document.createElement("div");
+    div.className = "contact-item";
+    div.innerHTML = `
+      <div class="contact-item-name">${a.name}</div>
+      <div class="contact-item-meta">
+        <span class="contact-item-discipline">${a.discipline}</span>
+        <a class="contact-item-email" href="mailto:${a.email}">${a.email}</a>
+      </div>`;
     list.appendChild(div);
   });
 }
-function buildSite(){
-  document.title=`${SITE.name} — Artists & Creatives`;
-  document.getElementById("logoText").textContent=SITE.logoText;
-  document.getElementById("heroTag").textContent=`${SITE.name} — A Creative Collective`;
-  document.getElementById("heroTagline").innerHTML=SITE.tagline.replace("raw","<em>raw</em>");
-  document.getElementById("heroSub").textContent=SITE.subtext;
-  document.getElementById("rosterTitle").textContent=SITE.rosterTitle;
-  document.getElementById("contactText").textContent=SITE.contactText;
-  document.getElementById("footerName").textContent=`© ${SITE.year} ${SITE.name}`;
-  document.getElementById("marqueeText").textContent=`${SITE.name.toUpperCase()} · FENNO · TRUEDENIM · ${SITE.name.toUpperCase()} · FENNO · TRUEDENIM · `;
+
+function buildSite() {
+  document.title = `${SITE.name} — Artists & Creatives`;
+  document.getElementById("logoText").textContent = SITE.logoText;
+  document.getElementById("heroTag").textContent = `${SITE.name} — A Creative Collective`;
+  document.getElementById("heroTagline").innerHTML = SITE.tagline.replace("raw", "<em>raw</em>");
+  document.getElementById("heroSub").textContent = SITE.subtext;
+  document.getElementById("rosterTitle").textContent = SITE.rosterTitle;
+  document.getElementById("contactText").textContent = SITE.contactText;
+  document.getElementById("footerName").textContent = `© ${SITE.year} ${SITE.name}`;
+  document.getElementById("marqueeText").textContent = `${SITE.name.toUpperCase()} · ARTISTS · CREATIVES · VISIONARIES · ${SITE.name.toUpperCase()} · ARTISTS · CREATIVES · VISIONARIES · `;
   buildCards();
   buildFeatured();
   buildContact();
 }
-document.addEventListener("DOMContentLoaded",buildSite);
 
-function filterCards(type,btn){
-  document.querySelectorAll(".filter-btn").forEach(b=>b.classList.remove("active"));
+document.addEventListener("DOMContentLoaded", buildSite);
+
+function filterCards(type, btn) {
+  document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
   btn.classList.add("active");
-  const cards=document.querySelectorAll(".artist-card");
-  let count=0;
-  cards.forEach(card=>{
-    const match=type==="all"||card.dataset.type===type;
-    card.classList.toggle("hidden",!match);
-    if(match)count++;
+  const cards = document.querySelectorAll(".artist-card");
+  let count = 0;
+  cards.forEach(card => {
+    const match = type === "all" || card.dataset.type === type;
+    card.classList.toggle("hidden", !match);
+    if (match) count++;
   });
-  document.getElementById("countLabel").textContent=
-    type==="all"?`${count} Artists`:`${count} ${btn.textContent} Artists`;
+  document.getElementById("countLabel").textContent =
+    type === "all" ? `${count} Creatives` : `${count} ${btn.textContent} Artists`;
 }
 </script>
 
@@ -236,11 +272,13 @@ function filterCards(type,btn){
   <div class="hero-scroll">Scroll</div>
 </section>
 
-<!-- Filter bar — only All + Music since both artists are music -->
 <div class="filter-bar" id="artists">
   <span class="filter-label">Filter by :</span>
   <button class="filter-btn active" onclick="filterCards('all',this)">All</button>
   <button class="filter-btn" onclick="filterCards('music',this)">Music</button>
+  <button class="filter-btn" onclick="filterCards('visual',this)">Visual Art</button>
+  <button class="filter-btn" onclick="filterCards('photography',this)">Photography</button>
+  <button class="filter-btn" onclick="filterCards('design',this)">Design</button>
 </div>
 
 <section class="grid-section">
@@ -283,8 +321,8 @@ function filterCards(type,btn){
 </footer>
 
 <script>
-  const cursor=document.getElementById('cursor');
-  const ring=document.getElementById('cursorRing');
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
   let mouseX=0,mouseY=0,ringX=0,ringY=0;
   document.addEventListener('mousemove',e=>{
     mouseX=e.clientX;mouseY=e.clientY;
@@ -303,3 +341,4 @@ function filterCards(type,btn){
 </script>
 </body>
 </html>
+
